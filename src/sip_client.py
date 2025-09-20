@@ -8,7 +8,7 @@ import logging
 from typing import Optional, Callable
 import numpy as np
 import sounddevice as sd
-from config import SAMPLE_RATE, CHANNELS
+from .config import SAMPLE_RATE, CHANNELS
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

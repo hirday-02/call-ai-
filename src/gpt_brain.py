@@ -2,7 +2,7 @@ from typing import List, Dict
 
 from openai import OpenAI
 
-from config import OPENAI_API_KEY, OPENAI_MODEL, SYSTEM_PROMPT
+from .config import OPENAI_API_KEY, OPENAI_MODEL, SYSTEM_PROMPT
 
 
 class GPTBrain:

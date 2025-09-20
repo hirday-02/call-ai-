@@ -4,7 +4,7 @@ import numpy as np
 import sounddevice as sd
 from faster_whisper import WhisperModel
 
-from config import SAMPLE_RATE, CHANNELS, RECORD_SECONDS, LANGUAGE, WHISPER_MODEL_SIZE, DEVICE_INDEX_IN
+from .config import SAMPLE_RATE, CHANNELS, RECORD_SECONDS, LANGUAGE, WHISPER_MODEL_SIZE, DEVICE_INDEX_IN
 
 
 class STTEngine:

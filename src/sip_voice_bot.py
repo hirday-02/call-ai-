@@ -11,11 +11,11 @@ from typing import Optional
 # Add the src directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from config import PRINT_TRANSCRIPTS, PRINT_BOT_TEXT, SAMPLE_RATE, RECORD_SECONDS
-from gpt_brain import GPTBrain
-from stt import STTEngine
-from tts import speak
-from sip_client import create_sip_client
+from .config import PRINT_TRANSCRIPTS, PRINT_BOT_TEXT, SAMPLE_RATE, RECORD_SECONDS
+from .gpt_brain import GPTBrain
+from .stt import STTEngine
+from .tts import speak
+from .sip_client import create_sip_client
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')

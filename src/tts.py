@@ -6,7 +6,7 @@ from typing import Optional
 
 from gtts import gTTS
 
-from config import TTS_VOICE, USE_COQUI_TTS
+from .config import TTS_VOICE, USE_COQUI_TTS
 
 
 def _play_with_pygame(file_path: str) -> bool:

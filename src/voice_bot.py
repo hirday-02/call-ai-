@@ -4,10 +4,10 @@ import os
 # Add the src directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from config import PRINT_TRANSCRIPTS, PRINT_BOT_TEXT
-from gpt_brain import GPTBrain
-from stt import STTEngine
-from tts import speak
+from .config import PRINT_TRANSCRIPTS, PRINT_BOT_TEXT
+from .gpt_brain import GPTBrain
+from .stt import STTEngine
+from .tts import speak
 
 
 def main() -> int:
