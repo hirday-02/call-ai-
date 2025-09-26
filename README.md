@@ -1,126 +1,275 @@
-## AI Calling Bot – Phase 1 + Phase 2 Integration (Windows-friendly)
+# 🤖 AI Calling Bot - Hindi & English Voice Assistant
 
-This project implements a complete AI calling bot with:
-- **Phase 1**: Local voice bot pipeline (STT → GPT → TTS) 
-- **Phase 2**: SIP integration with Asterisk PBX for real call simulation
-- **Integrated**: Combined SIP voice bot ready for testing
+A complete AI-powered voice bot that can make and receive phone calls with native support for **Hindi, English, and Hinglish** (mixed language) conversations.
 
-### What you get
-- **Phase 1**: Mic → Speech-to-Text (offline via Faster-Whisper) → GPT Brain → Text-to-Speech
-- **Phase 2**: SIP client integration with Asterisk PBX
-- **Integrated**: Complete SIP voice bot for real call testing
-- **Setup Tools**: Automated Asterisk configuration and testing scripts
+## 🌟 Features
 
-### Prerequisites (Windows 10/11)
-1) Install Python 3.10+
-2) Install FFmpeg and add to PATH
-   - Download build and add `bin` to PATH. Verify: `ffmpeg -version`.
-3) Install PortAudio runtime (for mic I/O)
-   - Easiest: install `sounddevice` wheels via pip; PortAudio is bundled for Windows.
-4) (Optional) Git
+- **📞 Real Phone Calls** - Make and receive actual phone calls via Twilio
+- **🌐 Multilingual Support** - Hindi, English, and mixed language conversations
+- **🧠 AI-Powered** - Uses OpenAI GPT-4o-mini for intelligent responses
+- **🎤 Advanced Speech Recognition** - Faster-Whisper with language auto-detection
+- **🗣️ High-Quality Text-to-Speech** - Multiple TTS providers (Azure, Google, ElevenLabs, gTTS)
+- **🔄 Language Detection** - Automatically detects and switches between languages
+- **🎯 One-Click Setup** - Single command to start everything
 
-### Setup
+## 🚀 Quick Start
+
+### 1. Clone the Repository
 ```bash
-python -m venv .venv
-.\.venv\Scripts\activate
+git clone https://github.com/your-username/ai-calling-bot.git
+cd ai-calling-bot
+```
+
+### 2. Install Dependencies
+```bash
 pip install -r requirements.txt
 ```
 
-Create `.env` in project root:
-```
-OPENAI_API_KEY=sk-...
+### 3. Set Up Environment Variables
+Create a `.env` file in the root directory:
+
+```env
+# Required - OpenAI API
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Required - Twilio (for phone calls)
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+TWILIO_PHONE_NUMBER=+1234567890
+
+# Optional - Enhanced Hindi TTS (choose one or more)
+# Azure Cognitive Services (Best Hindi quality)
+AZURE_SPEECH_KEY=your_azure_speech_key
+AZURE_SPEECH_REGION=your_region
+
+# Google Cloud TTS (Very good Hindi quality)
+GOOGLE_APPLICATION_CREDENTIALS=path/to/service-account.json
+
+# ElevenLabs (Good for custom voices)
+ELEVENLABS_API_KEY=your_elevenlabs_key
+ELEVENLABS_VOICE_ID=your_voice_id
+
+# Optional - Gemini AI (alternative to OpenAI)
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
-List input/output audio devices (optional):
+### 4. Install ngrok
+Download and install [ngrok](https://ngrok.com/) for webhook tunneling.
+
+### 5. Run the Bot
 ```bash
-python -m src.tools.list_devices
+python main.py
 ```
 
-## Quick Start
+That's it! The bot will:
+- Start the voice bot server
+- Start the audio server
+- Launch ngrok tunnel
+- Show you a menu to make calls
 
-### Phase 1 - Local Voice Bot
-```bash
-python -m src.voice_bot
+## 📞 Usage Examples
+
+### Making Calls
+1. Run `python main.py`
+2. Choose option 1 to call any number
+3. Choose option 2 to call yourself (for testing)
+
+### Conversation Examples
+- **Hindi**: "नमस्ते, मुझे restaurant booking चाहिए"
+- **English**: "Hello, I need help with hotel reservation"
+- **Hinglish**: "Namaste, booking chahiye please"
+
+## 🏗️ Architecture
+
+### Core Components
+- **main.py** - Complete launcher and server (the only file you need to run)
+- **src/mixed_ai_brain.py** - AI brain with language-aware responses
+- **src/mixed_stt.py** - Speech-to-text with Hindi/English support
+- **src/enhanced_hindi_tts.py** - High-quality Hindi text-to-speech
+- **src/language_detector.py** - Smart language detection including Hinglish
+
+### Workflow
 ```
-Interaction model: press Enter to start a turn, speak for up to ~5 seconds, wait for bot reply.
-
-### Phase 2 - SIP Integration
-```bash
-# 1. Test the integration
-python test_phase2.py
-
-# 2. Setup Asterisk (if installed)
-python setup_asterisk.py
-
-# 3. Run the SIP voice bot
-python -m src.sip_voice_bot
+Phone Call → Twilio → ngrok → Voice Bot Server
+    ↓
+Speech Input → STT (Faster-Whisper) → Language Detection
+    ↓
+AI Processing (OpenAI GPT-4o-mini) → Response Generation
+    ↓
+TTS (Azure/Google/ElevenLabs/gTTS) → Audio Response → Twilio → Phone
 ```
-Commands: `call <number>`, `answer`, `hangup`, `quit`
 
-### Configuration
-Edit `src/config.py` to tweak:
-- `RECORD_SECONDS` (default 5)
-- `LANGUAGE` (e.g., `en`)
-- `DEVICE_INDEX_IN` and `DEVICE_INDEX_OUT` if you need specific devices
+## 🎯 Language Detection
 
-### Notes on Models
-- STT: `faster-whisper` uses the `base` model by default (CPU okay). Change in `src/stt.py`.
-- LLM: OpenAI `gpt-4o-mini` by default; you can change the model in `src/gpt_brain.py`.
-- TTS: gTTS requires internet. For offline TTS, see Coqui TTS section below.
+The bot automatically detects:
+- **Hindi** (Devanagari script): "नमस्ते कैसे हैं आप"
+- **English** (Latin script): "Hello how are you"
+- **Hinglish** (Latin with Hindi words): "Namaste, kaise ho aap"
+- **Mixed** (Both scripts): "Hello नमस्ते, how are you"
 
-### Troubleshooting
-- If no audio: ensure microphone permissions are enabled and correct input device index is set.
-- If playback fails: confirm FFmpeg is installed and in PATH.
-- If STT is slow: switch to `tiny`/`small` models in `src/stt.py`.
-- If OpenAI errors: verify `OPENAI_API_KEY` in `.env`.
+## 🔊 Text-to-Speech Quality Ranking
 
-### Optional: Offline TTS (Coqui)
-Install: `pip install TTS` then set `USE_COQUI_TTS=True` in `src/config.py`. The first run downloads a model.
+1. **Azure Cognitive Services** ⭐⭐⭐⭐⭐ (Best Hindi quality)
+2. **Google Cloud TTS** ⭐⭐⭐⭐ (Very good Hindi quality)
+3. **ElevenLabs** ⭐⭐⭐⭐ (Good for custom voices)
+4. **gTTS** ⭐⭐ (Basic quality, always available as fallback)
+
+The system automatically tries providers in order of quality and falls back if needed.
+
+## 📁 Project Structure
+
+```
+ai-calling-bot/
+├── main.py                    # Main launcher (run this!)
+├── requirements.txt           # Python dependencies
+├── .env                      # Environment variables (create this)
+├── .gitignore               # Git ignore file
+├── asterisk/                # SIP configuration (optional)
+│   ├── extensions.conf
+│   └── sip.conf
+└── src/                     # Core modules
+    ├── config.py           # Configuration settings
+    ├── mixed_ai_brain.py   # AI brain with language support
+    ├── mixed_stt.py        # Speech-to-text engine
+    ├── enhanced_hindi_tts.py # High-quality Hindi TTS
+    ├── mixed_tts.py        # Mixed language TTS
+    ├── language_detector.py # Language detection
+    ├── sip_client.py       # SIP client (optional)
+    ├── sip_voice_bot.py    # SIP voice bot (optional)
+    ├── twilio_client.py    # Twilio integration
+    ├── voice_bot.py        # Local voice bot
+    └── tools/
+        └── list_devices.py # Audio device listing
+```
+
+## ⚙️ Configuration Options
+
+### Audio Settings
+```env
+SAMPLE_RATE=16000           # Audio sample rate
+CHANNELS=1                  # Audio channels
+RECORD_SECONDS=7.0          # Recording duration
+WHISPER_MODEL_SIZE=base     # Whisper model (tiny/small/base/medium/large)
+```
+
+### Language Settings
+```env
+LANGUAGE=en                 # Default language
+AUTO_DETECT_LANGUAGE=true   # Enable auto-detection
+DEFAULT_LANGUAGE=en         # Fallback language
+```
+
+## 🔧 Advanced Setup
+
+### For Better Hindi Recognition
+1. Use a larger Whisper model:
+   ```env
+   WHISPER_MODEL_SIZE=medium
+   ```
+
+2. Set up Azure or Google TTS for best Hindi quality:
+   ```env
+   AZURE_SPEECH_KEY=your_key
+   AZURE_SPEECH_REGION=eastus
+   ```
+
+### For Custom Voice (ElevenLabs)
+1. Create a voice at [ElevenLabs](https://elevenlabs.io)
+2. Add to `.env`:
+   ```env
+   ELEVENLABS_API_KEY=your_key
+   ELEVENLABS_VOICE_ID=your_voice_id
+   ```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**"No speech detected"**
+- Check microphone permissions
+- Verify `DEVICE_INDEX_IN` in config
+- Try speaking louder or closer to microphone
+
+**"TTS failed"**
+- Check your TTS provider credentials
+- Verify internet connection
+- System falls back to gTTS automatically
+
+**"Call failed"**
+- Verify Twilio credentials in `.env`
+- Check Twilio account balance
+- Ensure ngrok is running
+
+**"Language detection wrong"**
+- System learns from conversation context
+- Try speaking more clearly
+- Mixed language is detected as intended behavior
+
+### Debug Mode
+Set environment variable for detailed logging:
+```env
+PRINT_TRANSCRIPTS=true
+PRINT_BOT_TEXT=true
+```
+
+## 📊 System Requirements
+
+- **Python 3.8+**
+- **Internet connection** (for AI and TTS services)
+- **Microphone** (for local voice testing)
+- **Twilio account** (for phone calls)
+- **ngrok** (for webhook tunneling)
+
+### Recommended Specs
+- **RAM**: 4GB+ (for Whisper model)
+- **CPU**: Multi-core recommended
+- **Storage**: 2GB+ free space
+
+## 🌍 Supported Languages
+
+| Language | Code | Script | STT | TTS | AI |
+|----------|------|--------|-----|-----|----| 
+| Hindi | `hi` | Devanagari | ✅ | ✅ | ✅ |
+| English | `en` | Latin | ✅ | ✅ | ✅ |
+| Hinglish | `mixed` | Mixed | ✅ | ✅ | ✅ |
+
+## 🔐 Security & Privacy
+
+- **No hardcoded secrets** - All sensitive data in environment variables
+- **Local processing** - Speech recognition runs locally
+- **Secure tunneling** - ngrok provides HTTPS endpoints
+- **API key protection** - Keys never logged or exposed
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test with both Hindi and English
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- **OpenAI** for GPT-4o-mini API
+- **Twilio** for phone call infrastructure
+- **Faster-Whisper** for speech recognition
+- **Azure/Google/ElevenLabs** for high-quality TTS
+- **ngrok** for webhook tunneling
+
+## 💡 Tips for Best Experience
+
+1. **Speak clearly** - Both Hindi and English work best with clear pronunciation
+2. **Use natural language** - The AI understands context and mixed languages
+3. **Be patient** - First call might take a moment to initialize
+4. **Test locally first** - Use the voice bot mode (option 5) to test before phone calls
+5. **Check audio quality** - Generated audio files are saved in `audio_files/` directory
 
 ---
 
-## Phase 2 – Fake Call Environment (Asterisk + Softphone)
+**Made with ❤️ for the Hindi and English speaking community**
 
-Goal: simulate calls with zero telco cost.
-
-### 1) Install a Softphone
-- Zoiper or Linphone on your PC. You will register it to Asterisk as `1002` in the sample config.
-
-### 2) Asterisk Setup (local or VPS)
-- Install Asterisk (Debian/Ubuntu: `sudo apt install asterisk`) or use a prebuilt image.
-- Copy the sample configs from `asterisk/` into your Asterisk: `/etc/asterisk/`.
-  - Backup originals first.
-
-Files provided:
-- `asterisk/sip.conf` – two local SIP peers: `1001` (bot), `1002` (softphone)
-- `asterisk/extensions.conf` – dialplan to route calls between peers and to a bot hook
-
-Reload Asterisk after changes:
-```bash
-sudo asterisk -rx "sip reload" && sudo asterisk -rx "dialplan reload"
-```
-
-Register softphone to Asterisk server IP as `1002` with the password in `sip.conf`.
-
-### 3) Bot Integration Options
-You have two common options to connect the bot audio to Asterisk:
-- RTP/SIP media bridge using an Asterisk ARI/AGI app that pipes audio to the local bot (custom dev)
-- Use a small media gateway (e.g., `baresip` or `pjsua`) that dials extension `1001` and forwards audio to the bot process via stdin/stdout or local UDP
-
-This repo includes an outline script and comments in `asterisk/README.md` describing approaches. For production, consider ARI with a media handler that streams raw audio to the STT loop.
-
----
-
-## Scripts
-- `src/voice_bot.py` – main loop (press Enter → speak → bot responds)
-- `src/stt.py` – Faster-Whisper wrapper
-- `src/gpt_brain.py` – OpenAI chat
-- `src/tts.py` – gTTS and optional Coqui
-- `src/tools/list_devices.py` – enumerate audio devices
-
----
-
-## License
-MIT
-
-
+For support or questions, please open an issue on GitHub.

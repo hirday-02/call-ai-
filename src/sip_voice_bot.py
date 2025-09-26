@@ -11,11 +11,19 @@ from typing import Optional
 # Add the src directory to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from .config import PRINT_TRANSCRIPTS, PRINT_BOT_TEXT, SAMPLE_RATE, RECORD_SECONDS
-from .gpt_brain import GPTBrain
-from .stt import STTEngine
-from .tts import speak
-from .sip_client import create_sip_client
+try:
+    from .config import PRINT_TRANSCRIPTS, PRINT_BOT_TEXT, SAMPLE_RATE, RECORD_SECONDS
+    from .gpt_brain import GPTBrain
+    from .stt import STTEngine
+    from .tts import speak
+    from .sip_client import create_sip_client
+except ImportError:
+    # Handle direct execution
+    from config import PRINT_TRANSCRIPTS, PRINT_BOT_TEXT, SAMPLE_RATE, RECORD_SECONDS
+    from gpt_brain import GPTBrain
+    from stt import STTEngine
+    from tts import speak
+    from sip_client import create_sip_client
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -30,8 +38,8 @@ class SIPVoiceBot:
         self.username = username
         self.password = password
         
-        # Initialize components
-        self.brain = GPTBrain()
+        # Initialize components (defer GPTBrain initialization)
+        self.brain = None
         self.stt = STTEngine()
         self.sip_client = create_sip_client(server_ip, username, password)
         
@@ -48,6 +56,14 @@ class SIPVoiceBot:
         """Initialize all components"""
         try:
             logger.info("Initializing SIP Voice Bot...")
+            
+            # Initialize GPT Brain
+            try:
+                self.brain = GPTBrain()
+                logger.info("GPT Brain initialized successfully")
+            except Exception as e:
+                logger.error(f"Failed to initialize GPT Brain: {e}")
+                return False
             
             # Initialize SIP client
             if not self.sip_client.initialize():
